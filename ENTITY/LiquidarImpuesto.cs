@@ -9,22 +9,20 @@ namespace ENTITY
 {
     public class LiquidarImpuesto
     {
-        public decimal Ingreso { get; set; }
+        public Contribuyente Contribuyente { get; set; }
         public decimal Sancion { get; set; }
         public decimal ValorImpuesto { get; set; }
         public decimal ValorImpuestoTotal { get; set; }
-        public DateTime FechaDeclaracion { get; set; }
-        public DateTime FechaPlazo { get; set; }
         public String RespuestaEmplazamiento { get; set; }
         public decimal SMLDV = 980657 / 30;
 
 
-        public LiquidarImpuesto(decimal ingreso, DateTime fechaDeclaracion, DateTime fechaPlazo)
+        public LiquidarImpuesto(Contribuyente contribuyente, string respuestaEmplazamiento)
         {
 
-            Ingreso = ingreso;
-            FechaDeclaracion = fechaDeclaracion;
-            FechaPlazo = fechaPlazo;
+
+            Contribuyente = contribuyente;
+            RespuestaEmplazamiento = respuestaEmplazamiento;
 
 
         }
@@ -35,7 +33,7 @@ namespace ENTITY
 
         public int CalculoDiasExtemporaneidad()
         {
-            var fecha = FechaDeclaracion.Subtract(FechaPlazo);
+            var fecha = Contribuyente.FechaDeclaracion.Subtract(Contribuyente.FechaPlazo);
             return fecha.Days;
 
         }
@@ -43,12 +41,12 @@ namespace ENTITY
         public void CalculoImpuesto()
         {
 
-            ValorImpuesto = Ingreso * Convert.ToDecimal(0.15);
+            ValorImpuesto = Contribuyente.Ingreso * Convert.ToDecimal(0.15);
         }
 
-        public decimal CalculoSancionSinEmplazamiento()
+        public void CalculoSancionSinEmplazamiento()
         {
-            return ValorImpuesto * Convert.ToDecimal(CalculoDiasExtemporaneidad()) * Convert.ToDecimal(0.03);
+            Sancion = ValorImpuesto * Convert.ToDecimal(CalculoDiasExtemporaneidad()) * Convert.ToDecimal(0.03);
         }
 
         public void CalculoSancionConEmplazamiento()
@@ -56,7 +54,7 @@ namespace ENTITY
             Sancion = ValorImpuesto * Convert.ToDecimal(CalculoDiasExtemporaneidad()) * Convert.ToDecimal(0.04) * SMLDV;
         }
 
-        public void CalcularLiquidacion(string respuesta)
+        public void CalcularLiquidacion()
         {
             if (CalculoDiasExtemporaneidad() <= 0)
             {
@@ -66,24 +64,32 @@ namespace ENTITY
             }
             else
             {
-                if (respuesta == "SI")
+                if (RespuestaEmplazamiento == "SI")
                 {
+
                     CalculoImpuesto();
                     CalculoSancionConEmplazamiento();
                     ValorImpuestoTotal = ValorImpuesto + Sancion;
                 }
                 else
                 {
+
                     CalculoImpuesto();
-                    ValorImpuestoTotal = ValorImpuesto + CalculoSancionSinEmplazamiento();
+                    CalculoSancionSinEmplazamiento();
+                    ValorImpuestoTotal = ValorImpuesto + Sancion;
                 }
 
             }
         }
 
+        public override string ToString()
+        {
+            return $"{Contribuyente.NumeroFormulario};{Contribuyente.Identificacion};{Contribuyente.FechaPlazo};{Contribuyente.FechaDeclaracion};{Contribuyente.Ingreso};" +
+                $"{ValorImpuestoTotal};{RespuestaEmplazamiento};{Sancion}";
+        }
+
 
     }
-
 
 }
 
