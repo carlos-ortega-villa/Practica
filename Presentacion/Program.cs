@@ -51,7 +51,7 @@ namespace Presentacion
             */
             Console.WriteLine("Modificar");
             Contribuyente contribuyente3 = new Contribuyente(2, "5",
-            Convert.ToDateTime("15/10/2020"), Convert.ToDateTime("6/10/2020"), 90000);
+            Convert.ToDateTime("10/10/2020"), Convert.ToDateTime("12/10/2020"), 90000);
             LiquidarImpuesto liquidarImpuesto3 = new LiquidarImpuesto(contribuyente3, "NO");
             Console.WriteLine(liquidarImpuestoService.Modificar(liquidarImpuesto3));
 

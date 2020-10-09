@@ -95,7 +95,7 @@ namespace DAL
             fileStream.Close();
             foreach (var item in LiquidarImpuestos)
             {
-                if (item.Contribuyente.FechaDeclaracion != liquidarImpuesto.Contribuyente.FechaDeclaracion)
+                if (item.Contribuyente.NumeroFormulario != liquidarImpuesto.Contribuyente.NumeroFormulario)
                 {
                     Guardar(item);
                 }
